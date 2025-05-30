@@ -1,7 +1,7 @@
 name: Build and Publish Ktl-SQL-Runner Library
 
 on:
-  merge:
+  pull_request:
     branches:
       - main
       - develop
