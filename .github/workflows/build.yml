@@ -24,7 +24,7 @@ jobs:
         run: |
           git fetch --tags
 
-          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v1.0.0")
           echo "Last tag: $LAST_TAG"
 
           MAJOR=$(echo "$LAST_TAG" | sed 's/^v//' | cut -d. -f1)
@@ -42,6 +42,9 @@ jobs:
 
           echo "overrideVersion=$FINAL_VERSION" >> $GITHUB_OUTPUT
           echo "finalVersion=$FINAL_VERSION"
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
 
       - name: Build with Gradle
         run: ./gradlew build -PoverrideVersion=${{ steps.versioning.outputs.overrideVersion }}
