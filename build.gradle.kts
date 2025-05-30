@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "io.github.tonelloiago"
-version = "1.0-SNAPSHOT"
+version = project.findProperty("overrideVersion") ?: "1.0.0"
 
 repositories {
     mavenCentral()
