@@ -53,7 +53,7 @@ publishing {
 
 sonarqube {
     properties {
-        property("sonar.projectKey", "System.getenv("SONAR_PROJECT_KEY")")
+        property("sonar.projectKey", System.getenv("SONAR_PROJECT_KEY"))
         property("sonar.organization", "tonelloiago") 
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.login", System.getenv("SONAR_TOKEN"))
