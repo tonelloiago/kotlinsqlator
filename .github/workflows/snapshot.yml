@@ -3,7 +3,7 @@ name: Build and Publish Sapshot
 on:
   push:
     branches:
-      - feature/workfloes
+      - feature/test-workfloes
 
 jobs:
 
