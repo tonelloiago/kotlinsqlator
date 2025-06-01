@@ -1,4 +1,4 @@
-name: Release Ktl-SQL-Runner
+name: Release
 
 on:
   pull_request:
