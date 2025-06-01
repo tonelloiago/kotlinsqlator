@@ -1,4 +1,4 @@
-name: Build and Publish Sapshot
+name: Build and Publish Snapshot
 
 on:
   push:
