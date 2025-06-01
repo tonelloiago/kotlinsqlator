@@ -4,6 +4,7 @@ plugins {
     id("org.springframework.boot") version "3.4.5"
     id("io.spring.dependency-management") version "1.1.7"
     id("org.sonarqube") version "4.3.0.3225"
+    jacoco
 }
 
 group = "io.github.tonelloiago"
@@ -22,12 +23,26 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
 }
 
-tasks.test {
-    useJUnitPlatform()
-}
-
 kotlin {
     jvmToolchain(21)
+}
+
+jacoco {
+    toolVersion = "0.8.11"
+}
+
+tasks.test {
+    useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
 }
 
 publishing {
@@ -57,5 +72,7 @@ sonarqube {
         property("sonar.organization", "tonelloiago") 
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.login", System.getenv("SONAR_TOKEN"))
+
+        property("sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco/test/jacocoTestReport.xml")
     }
 }

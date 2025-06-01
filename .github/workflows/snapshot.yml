@@ -1,10 +1,9 @@
 name: Build and Publish Ktl-SQL-Runner Library
 
 on:
-  pull_request:
-    types: [closed]
+  push:
     branches:
-      - develop
+      - feature/workfloes
 
 jobs:
 
@@ -49,11 +48,47 @@ jobs:
       - name: Run Tests
         run: ./gradlew test
 
+    static-analysis:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+
+        - name: Set up JDK
+          uses: actions/setup-java@v4
+          with:
+            distribution: 'temurin'
+            java-version: '21'
+
+        - name: Grant execute permission for Gradle
+          run: chmod +x ./gradlew
+
+        - name: Cache Gradle
+          uses: actions/cache@v3
+          with:
+            path: |
+              ~/.gradle/caches
+              ~/.gradle/wrapper
+            key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+
+        - name: Run tests and coverage
+          run: ./gradlew test jacocoTestReport
+
+        - name: Run SonarCloud analysis
+          env:
+            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          run: |
+            ./gradlew sonarqube \
+              -Dsonar.projectKey=SEU_PROJECT_KEY \
+              -Dsonar.organization=SEU_ORG \
+              -Dsonar.host.url=https://sonarcloud.io \
+              -Dsonar.login=$SONAR_TOKEN
+
   snapshot:
     name: Publish SNAPSHOT
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
-    needs: test
+    needs: static-analysis
     env:
       GPR_USER: ${{ github.actor }}
       GPR_TOKEN: ${{ secrets.GPR_TOKEN }}
