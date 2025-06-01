@@ -1,10 +1,11 @@
-name: Build and Publish Ktl-SQL-Runner Library
+name: Build and Publish Sapshot
 
 on:
+  push:
+    branches: [develop]
   pull_request:
     types: [closed]
-    branches:
-      - develop
+    branches: [develop]
 
 jobs:
 
