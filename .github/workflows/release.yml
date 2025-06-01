@@ -52,7 +52,7 @@ jobs:
     name: Publish Release
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
-    needs: static-analysis
+    needs: test
 
     permissions:
       contents: write
