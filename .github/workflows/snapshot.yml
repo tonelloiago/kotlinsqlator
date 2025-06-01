@@ -1,4 +1,4 @@
-name: Build and Publish Ktl-SQL-Runner Library
+name: Build and Publish Sapshot
 
 on:
   push:
@@ -48,41 +48,42 @@ jobs:
       - name: Run Tests
         run: ./gradlew test
 
-    static-analysis:
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v4
+  static-analysis:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-        - name: Set up JDK
-          uses: actions/setup-java@v4
-          with:
-            distribution: 'temurin'
-            java-version: '21'
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
 
-        - name: Grant execute permission for Gradle
-          run: chmod +x ./gradlew
+      - name: Grant execute permission for Gradle
+        run: chmod +x ./gradlew
 
-        - name: Cache Gradle
-          uses: actions/cache@v3
-          with:
-            path: |
-              ~/.gradle/caches
-              ~/.gradle/wrapper
-            key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+      - name: Cache Gradle
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
 
-        - name: Run tests and coverage
-          run: ./gradlew test jacocoTestReport
+      - name: Run tests and coverage
+        run: ./gradlew test jacocoTestReport
 
-        - name: Run SonarCloud analysis
-          env:
-            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          run: |
-            ./gradlew sonarqube \
-              -Dsonar.projectKey=SEU_PROJECT_KEY \
-              -Dsonar.organization=SEU_ORG \
-              -Dsonar.host.url=https://sonarcloud.io \
-              -Dsonar.login=$SONAR_TOKEN
+      - name: Run SonarCloud analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          ./gradlew sonarqube \
+            -Dsonar.projectKey=SEU_PROJECT_KEY \
+            -Dsonar.organization=SEU_ORG \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=$SONAR_TOKEN
 
   snapshot:
     name: Publish SNAPSHOT
